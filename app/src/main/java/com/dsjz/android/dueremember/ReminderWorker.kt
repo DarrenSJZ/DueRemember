@@ -23,7 +23,7 @@ class ReminderWorker (
 
         val reminderNotificationDueSoon = reminderRepository.getRemindersDueSoon(0, 1)
         for (reminder in reminderNotificationDueSoon) {
-            val text = "You have an upcoming reminder: '${reminder.title}', in 1 day."
+            val text = "You have an upcoming reminder: '${reminder.title}' due tomorrow."
             val title = "DueRemember Due Soon"
             sendNotification(context, reminder, text, title, NOTIFICATION_REMINDER_DUE_SOON_CID)
         }
