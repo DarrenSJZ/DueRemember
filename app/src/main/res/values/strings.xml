@@ -32,6 +32,8 @@
     <string name="save_reminder">Save Reminder</string>
     <string name="reminder_report_subject">Reminder Details</string>
     <string name="send_report">Send Reminder</string>
+    <string name="date_selected">Date</string>
+    <string name="time_selected">Time</string>
 
     //Notifications
     <string name="notification_due_soon_channel_name">Reminder Due Dates</string>

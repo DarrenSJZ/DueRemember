@@ -1,9 +1,11 @@
 package com.dsjz.android.dueremember
 
+import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.format.DateFormat
@@ -57,6 +59,17 @@ class NewReminderFragment : Fragment() {
         if (didTakePhoto && photoName != null) {
             newReminderViewModel.updateReminder { oldReminder ->
                 oldReminder.copy(photoFileName = photoName)
+            }
+        }
+    }
+
+    private val pickPhoto = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            val file = saveUriToFile(uri)
+            newReminderViewModel.updateReminder { oldReminder ->
+                oldReminder.copy(photoFileName = file.name)
             }
         }
     }
@@ -115,7 +128,6 @@ class NewReminderFragment : Fragment() {
             // Bind Title to Text Changes
             reminderTitle.doOnTextChanged { text, _, _, _ ->
                 newReminderViewModel.updateReminder { oldReminder ->
-                    reminderSaveBtn.isEnabled = reminderTitle.text.isNotBlank()
                     oldReminder.copy(title = text.toString())
                 }
             }
@@ -123,7 +135,6 @@ class NewReminderFragment : Fragment() {
             // Bind Description to Text Changes
             reminderDesc.doOnTextChanged { text, _, _, _ ->
                 newReminderViewModel.updateReminder { oldReminder ->
-                    reminderSaveBtn.isEnabled = reminderDesc.text.isNotBlank()
                     oldReminder.copy(desc = text.toString())
                 }
             }
@@ -135,25 +146,14 @@ class NewReminderFragment : Fragment() {
                 }
             }
 
-            // Bind Camera Button to Launch Camera
+            // Bind Camera Button to Launch Camera or Gallery
             reminderCam.setOnClickListener {
-                photoName = "IMG_${Date().time}.jpg"
-                val photoFile = File(
-                    requireContext().applicationContext.filesDir,
-                    photoName.toString()
-                )
-
-                val photoUri = FileProvider.getUriForFile(
-                    requireContext(),
-                    "com.dsjz.android.dueremember.fileprovider",
-                    photoFile
-                )
-                takePhoto.launch(photoUri)
+                showPhotoDialog()
             }
 
             // Check if the device can handle the camera intent
             val captureImageIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            reminderCam.isEnabled = canResolveIntent(captureImageIntent)
+            reminderCam.isEnabled = true
 
             // Bind Date Button to Launch DatePicker
             dateBtn.setOnClickListener {
@@ -284,15 +284,11 @@ class NewReminderFragment : Fragment() {
                 reminderDesc.setText(reminder.desc)
             }
 
-            if (reminderDesc.text.isBlank() || reminderTitle.text.isBlank())
-                reminderSaveBtn.isEnabled = false
-            else reminderSaveBtn.isEnabled = true
-
             val dateString = DateFormat.format("EEEE, MMMM d, yyyy", reminder.date).toString()
-            dateBtn.text = dateString
+            dateBtn.text = if (reminder.date == Date(0)) getString(R.string.date_selected) else dateString
 
             val timeString = DateFormat.format("h:mm a", reminder.date).toString()
-            timeBtn.text = timeString
+            timeBtn.text = if (reminder.date == Date(0)) getString(R.string.time_selected) else timeString
 
             completedCheckbox.isChecked = reminder.isSolved
         }
@@ -343,5 +339,50 @@ class NewReminderFragment : Fragment() {
 
     fun isReminderUnsaved(): Boolean {
         return binding.reminderTitle.text.isNotBlank() || binding.reminderDesc.text.isNotBlank()
+    }
+
+    private fun showPhotoDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Select Photo")
+            .setItems(arrayOf("Take Photo", "Choose from Gallery")) { _, which ->
+                when (which) {
+                    0 -> takePhotoFromCamera()
+                    1 -> pickPhotoFromGallery()
+                }
+            }
+            .show()
+    }
+
+    private fun takePhotoFromCamera() {
+        photoName = "IMG_${Date().time}.jpg"
+        val photoFile = File(
+            requireContext().applicationContext.filesDir,
+            photoName.toString()
+        )
+
+        val photoUri = FileProvider.getUriForFile(
+            requireContext(),
+            "com.dsjz.android.dueremember.fileprovider",
+            photoFile
+        )
+        takePhoto.launch(photoUri)
+    }
+
+    private fun pickPhotoFromGallery() {
+        pickPhoto.launch("image/*")
+    }
+
+    private fun saveUriToFile(uri: Uri): File {
+        val inputStream = requireContext().contentResolver.openInputStream(uri)
+        val file = File(requireContext().applicationContext.filesDir, "IMG_${Date().time}.jpg")
+        val outputStream = file.outputStream()
+
+        inputStream?.use { input ->
+            outputStream.use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        return file
     }
 }
