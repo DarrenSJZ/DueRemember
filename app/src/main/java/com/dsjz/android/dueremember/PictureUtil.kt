@@ -6,7 +6,6 @@ import android.graphics.Matrix
 import androidx.exifinterface.media.ExifInterface
 import java.io.File
 import java.io.IOException
-import kotlin.math.roundToInt
 
  fun getScaledBitmap(bitmap: Bitmap, destWidth: Int, destHeight: Int): Bitmap {
     val srcWidth = bitmap.width

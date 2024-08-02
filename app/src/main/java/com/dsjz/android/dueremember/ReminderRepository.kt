@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import java.util.UUID
 
 private const val DATABASE_NAME = "reminder-database"
@@ -37,6 +38,36 @@ class ReminderRepository private constructor(
         }
     }
 
+    suspend fun getRemindersDueSoon(start: Int, end: Int) : List<Reminder> {
+        val calendar = Calendar.getInstance()
+
+        calendar.add(Calendar.DAY_OF_YEAR, start)
+        val targetStartDate = calendar.time
+        val startOfDayCalendar = Calendar.getInstance()
+        startOfDayCalendar.time = targetStartDate
+        startOfDayCalendar.set(Calendar.HOUR_OF_DAY, 0)
+        startOfDayCalendar.set(Calendar.MINUTE, 0)
+        startOfDayCalendar.set(Calendar.SECOND, 0)
+        startOfDayCalendar.set(Calendar.MILLISECOND, 0)
+        val startOfDay = startOfDayCalendar.time
+
+        calendar.add(Calendar.DAY_OF_YEAR, end)
+        val targetEndDate = calendar.time
+        val endOfDayCalendar = Calendar.getInstance()
+        endOfDayCalendar.time = targetEndDate
+        endOfDayCalendar.set(Calendar.HOUR_OF_DAY, 23)
+        endOfDayCalendar.set(Calendar.MINUTE, 59)
+        endOfDayCalendar.set(Calendar.SECOND, 59)
+        endOfDayCalendar.set(Calendar.MILLISECOND, 999)
+        val endOfDay = endOfDayCalendar.time
+        return database.reminderDao().getRemindersDueSoon(startOfDay, endOfDay)
+    }
+
+    suspend fun getRemindersPastDue() : List<Reminder> {
+        val currentDate = Calendar.getInstance().time
+        return database.reminderDao().getRemindersPastDue(currentDate)
+    }
+
     suspend fun addReminder(reminder: Reminder) {
         database.reminderDao().addReminder(reminder)
     }
@@ -64,6 +95,8 @@ class ReminderRepository private constructor(
         }
     }
 }
+
+
 
 
 
