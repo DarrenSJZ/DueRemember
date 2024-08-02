@@ -3,40 +3,58 @@ package com.dsjz.android.dueremember
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-
-private const val ARG_PARAM1 = "param1"
-
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.dsjz.android.dueremember.databinding.FragmentCompletedTaskBinding
+import kotlinx.coroutines.launch
 
 class CompletedTaskFragment : Fragment() {
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
+    private var _binding: FragmentCompletedTaskBinding? = null
+    private val binding
+        get() = checkNotNull(_binding) {
+            "Binding is inaccessible due to null, is the view visible?"
+        }
+    private val completedTaskViewModel: CompletedTaskViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_completed_task, container, false)
+        _binding = FragmentCompletedTaskBinding.inflate(inflater, container, false)
+
+        binding.completedTaskRecyclerView.layoutManager = LinearLayoutManager(context)
+        return binding.root
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.fragment_all_task, menu)
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
-
-            else -> { super.onOptionsItemSelected(item)}
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                completedTaskViewModel.completedReminders.collect { reminders ->
+                    binding.completedTaskRecyclerView.adapter =
+                        AllTaskListAdapter(reminders, { reminderId ->
+                            findNavController().navigate(
+                                CompletedTaskFragmentDirections.showNewReminderFromCompleted(reminderId)
+                            )
+                        }, { reminder ->
+                            completedTaskViewModel.updateReminder(reminder)
+                        })
+                    binding.emptyListText.visibility = if (reminders.isEmpty()) View.VISIBLE else View.GONE
+                }
+            }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

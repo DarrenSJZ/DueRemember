@@ -33,12 +33,20 @@
         android:id="@+id/today_tasks"
         android:name="com.dsjz.android.dueremember.TodayTaskFragment"
         android:label="TodayTaskFragment"
-        tools:layout="@layout/fragment_today_task" />
+        tools:layout="@layout/fragment_today_task">
+        <action
+            android:id="@+id/show_new_reminder_from_today"
+            app:destination="@+id/newReminderFragment"/>
+    </fragment>
     <fragment
         android:id="@+id/tasks_completed"
         android:name="com.dsjz.android.dueremember.CompletedTaskFragment"
         android:label="CompletedTaskFragment"
-        tools:layout="@layout/fragment_completed_task" />
+        tools:layout="@layout/fragment_completed_task">
+        <action
+            android:id="@+id/show_new_reminder_from_completed"
+            app:destination="@+id/newReminderFragment"/>
+    </fragment>
     <dialog
         android:id="@+id/datePickerFragment"
         android:name="com.dsjz.android.dueremember.DatePickerFragment"
