@@ -29,6 +29,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.dsjz.android.dueremember.databinding.FragmentNewReminderBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Calendar
@@ -70,16 +71,20 @@ class NewReminderFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,object : OnBackPressedCallback(true) {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (binding.reminderTitle.text.isBlank() || binding.reminderDesc.text.isBlank()) {
                     Toast.makeText(activity, "Fill in the Title and Description!", Toast.LENGTH_SHORT).show()
-                } else{
+                } else {
                     isEnabled = false
                     requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
             }
         })
+
+        // Hide the bottom navigation bar
+        val bottomNavView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
+        bottomNavView?.visibility = View.GONE
 
         // Setup MenuProvider
         val menuHost = requireActivity()
@@ -87,7 +92,6 @@ class NewReminderFragment : Fragment() {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.fragment_new_reminder, menu)
             }
-
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
@@ -113,7 +117,6 @@ class NewReminderFragment : Fragment() {
                 newReminderViewModel.updateReminder { oldReminder ->
                     reminderSaveBtn.isEnabled = reminderTitle.text.isNotBlank()
                     oldReminder.copy(title = text.toString())
-
                 }
             }
 
@@ -172,7 +175,11 @@ class NewReminderFragment : Fragment() {
 
             // Save reminder and return to AllTaskFragment when save button is clicked
             reminderSaveBtn.setOnClickListener {
-                saveReminderAndReturn()
+                if (binding.reminderTitle.text.isBlank() || binding.reminderDesc.text.isBlank()) {
+                    Toast.makeText(activity, "Fill in the Title and Description!", Toast.LENGTH_SHORT).show()
+                } else {
+                    saveReminderAndReturn()
+                }
             }
         }
 
@@ -210,6 +217,10 @@ class NewReminderFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        // Show the bottom navigation bar again
+        val bottomNavView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
+        bottomNavView?.visibility = View.VISIBLE
     }
 
     private fun showDeleteConfirmationDialog() {
@@ -328,5 +339,9 @@ class NewReminderFragment : Fragment() {
                 findNavController().popBackStack()
             }
         }
+    }
+
+    fun isReminderUnsaved(): Boolean {
+        return binding.reminderTitle.text.isNotBlank() || binding.reminderDesc.text.isNotBlank()
     }
 }

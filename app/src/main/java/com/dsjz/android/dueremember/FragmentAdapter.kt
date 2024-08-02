@@ -14,7 +14,7 @@ class ReminderHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(reminder: Reminder, onReminderClicked: (reminderId: UUID) -> Unit, onReminderStatusChanged: (reminder: Reminder) -> Unit) {
         binding.reminderTitle.text = reminder.title
-        binding.reminderCreatedDate.text = SimpleDateFormat("EEEE, MMMM d, yyyy | h:mm a", Locale.getDefault()).format(reminder.creationDate)
+        binding.reminderCreatedDate.text = SimpleDateFormat("EEEE, MMMM d, yyyy, h:mm a", Locale.getDefault()).format(reminder.creationDate)
         binding.reminderDate.text = SimpleDateFormat("EEEE, MMMM d, yyyy | h:mm a", Locale.getDefault()).format(reminder.date)
 
         binding.root.setOnClickListener {
