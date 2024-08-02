@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/all_tasks"
+        android:icon="@drawable/ic_all_tasks"
+        android:title="@string/bnb_all_tasks" />
+    <item
+        android:id="@+id/today_tasks"
+        android:title="@string/bnb_today"
+        android:icon="@drawable/ic_tasks_today"/>
+    <item
+        android:id="@+id/tasks_completed"
+        android:title="@string/bnb_completed"
+        android:icon="@drawable/ic_completed_tasks"/>
+</menu>

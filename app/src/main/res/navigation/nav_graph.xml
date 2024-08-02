@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/all_tasks">
+
+    <fragment
+        android:id="@+id/all_tasks"
+        android:name="com.dsjz.android.dueremember.AllTaskFragment"
+        android:label="AllTaskFragment"
+        tools:layout="@layout/fragment_all_task">
+        <action
+            android:id="@+id/show_new_reminder"
+            app:destination="@+id/newReminderFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/newReminderFragment"
+        android:name="com.dsjz.android.dueremember.NewReminderFragment"
+        android:label="NewReminderFragment"
+        tools:layout="@layout/fragment_new_reminder">
+        <argument
+            android:name="reminderId"
+            app:argType="java.util.UUID"/>
+        <action
+            android:id="@+id/select_date"
+            app:destination="@+id/datePickerFragment"/>
+        <action
+            android:id="@+id/select_time"
+            app:destination="@+id/timePickerFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/today_tasks"
+        android:name="com.dsjz.android.dueremember.TodayTaskFragment"
+        android:label="TodayTaskFragment"
+        tools:layout="@layout/fragment_today_task" />
+    <fragment
+        android:id="@+id/tasks_completed"
+        android:name="com.dsjz.android.dueremember.CompletedTaskFragment"
+        android:label="CompletedTaskFragment"
+        tools:layout="@layout/fragment_completed_task" />
+    <dialog
+        android:id="@+id/datePickerFragment"
+        android:name="com.dsjz.android.dueremember.DatePickerFragment"
+        android:label="DatePickerFragment">
+        <argument
+            android:name="reminderDate"
+            app:argType="java.util.Date"/>
+    </dialog>
+    <dialog
+        android:id="@+id/timePickerFragment"
+        android:name="com.dsjz.android.dueremember.TimePickerFragment"
+        android:label="TimePickerFragment">
+        <argument
+            android:name="reminderTime"
+            app:argType="long"/>
+    </dialog>
+</navigation>

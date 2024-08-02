@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">DueRemember</string>
+
+    //Navbar Strings
+    <string name="bnb_all_tasks">All Tasks</string>
+    <string name="bnb_completed">Completed Tasks</string>
+    <string name="bnb_today">Today\'s Tasks</string>
+
+    //All Tasks List
+    <string name="reminder_resolved_label">Completed</string>
+    <string name="empty_list_label">No Tasks yet.</string>
+
+    //Menu Strings
+    <string name="new_reminder">New Reminder</string>
+    <string name="delete_all">Delete All</string>
+    <string name="delete_reminder">Delete Reminder</string>
+    <string name="share_reminder">Share Reminder</string>
+
+    //New Reminder
+    <string name="reminder_title_placeholder"><i>Enter a title.</i></string>
+    <string name="reminder_desc_placeholder"><i>Enter a short description.</i></string>
+    <string name="desc_reminder_image">Image Set</string>
+    <string name="desc_reminder_no_image">No Image Set</string>
+    <string name="desc_reminder_image_btn">Take a Photo</string>
+    <string name="reminder_no_desc">No Description</string>
+    <string name="checkbox_label">Completed</string>
+    <string name="reminder_solved">The reminder has been completed</string>
+    <string name="reminder_not_solved">The reminder hasn\'t been completed yet</string>
+    <string name="reminder_message">The reminder %1$s was set on "%2$s", with description %3$s. %4$s </string>
+    <string name="detail_label"><b>Details</b></string>
+    <string name="save_reminder">Save Reminder</string>
+    <string name="reminder_report_subject">Reminder Details</string>
+    <string name="send_report">Send Reminder</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+</resources>
