@@ -53,16 +53,16 @@
             android:id="@+id/due_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Due:"
-            android:textSize="16sp"
-            tools:text="Due:" />
+            android:text="@string/reminder_due"
+            android:textSize="14sp"
+            tools:text="@string/reminder_due" />
 
         <TextView
             android:id="@+id/reminder_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:textSize="16sp"
+            android:textSize="14sp"
             tools:text="Due date" />
     </LinearLayout>
 
@@ -70,10 +70,9 @@
         android:id="@+id/reminder_solved"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:contentDescription="@string/reminder_resolved_label"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_resolved" />

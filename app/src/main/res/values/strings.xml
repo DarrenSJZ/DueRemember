@@ -9,6 +9,7 @@
     //All Tasks List
     <string name="reminder_resolved_label">Completed</string>
     <string name="empty_list_label">No Tasks yet.</string>
+    <string name="reminder_due">Due:</string>
 
     //Menu Strings
     <string name="new_reminder">New Reminder</string>

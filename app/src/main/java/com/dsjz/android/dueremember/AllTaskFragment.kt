@@ -20,10 +20,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dsjz.android.dueremember.databinding.FragmentAllTaskBinding
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.UUID
+import java.util.*
 
 class AllTaskFragment : Fragment() {
 
@@ -73,13 +70,16 @@ class AllTaskFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 allTaskViewModel.reminders.collect { reminders ->
+                    val unresolvedReminders = allTaskViewModel.getUnresolvedReminders()
                     binding.allTaskListRecyclerView.adapter =
-                        AllTaskListAdapter(reminders) { reminderId ->
+                        AllTaskListAdapter(unresolvedReminders, { reminderId ->
                             findNavController().navigate(
                                 AllTaskFragmentDirections.showNewReminder(reminderId)
                             )
-                        }
-                    binding.emptyListText.visibility = if (reminders.isEmpty()) View.VISIBLE else View.GONE
+                        }, { reminder ->
+                            allTaskViewModel.updateReminder(reminder)
+                        })
+                    binding.emptyListText.visibility = if (unresolvedReminders.isEmpty()) View.VISIBLE else View.GONE
                 }
             }
         }
@@ -121,9 +121,4 @@ class AllTaskFragment : Fragment() {
             create().show()
         }
     }
-}
-
-private fun formatDate(date: Date): String {
-    val sdf = SimpleDateFormat("EEEE, MMMM d, yyyy | h:mm a", Locale.getDefault())
-    return sdf.format(date)
 }
