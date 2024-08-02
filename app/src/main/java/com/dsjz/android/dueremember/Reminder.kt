@@ -10,7 +10,8 @@ data class Reminder (
     @PrimaryKey val id: UUID,
     var title: String,
     var desc: String,
-    var date: Date = Date(),
+    var date: Date = Date(), //Due Date
+    var creationDate: Date = Date(),
     var dateString: String = "",
     var isSolved : Boolean,
     var author : String = "",

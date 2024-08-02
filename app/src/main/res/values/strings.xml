@@ -27,7 +27,7 @@
     <string name="reminder_solved">The reminder has been completed</string>
     <string name="reminder_not_solved">The reminder hasn\'t been completed yet</string>
     <string name="reminder_message">The reminder %1$s was set on "%2$s", with description %3$s. %4$s </string>
-    <string name="detail_label"><b>Details</b></string>
+    <string name="detail_label"><b>Due Date and Status: </b></string>
     <string name="save_reminder">Save Reminder</string>
     <string name="reminder_report_subject">Reminder Details</string>
     <string name="send_report">Send Reminder</string>

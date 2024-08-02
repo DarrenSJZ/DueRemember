@@ -5,27 +5,38 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.dsjz.android.dueremember.databinding.ListItemAllTasksBinding
+import java.text.SimpleDateFormat
+import java.util.Locale
 import java.util.UUID
 
 
 class ReminderHolder(
-    private  val binding: ListItemAllTasksBinding
+    private val binding: ListItemAllTasksBinding
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind (reminder: Reminder, onReminderClicked: (reminderId: UUID) -> Unit) {
+    fun bind(reminder: Reminder, onReminderClicked: (reminderId: UUID) -> Unit) {
         binding.reminderTitle.text = reminder.title
-        binding.reminderDate.text = reminder.dateString
+        binding.reminderCreatedDate.text = SimpleDateFormat("EEEE, MMMM d, yyyy | h:mm a", Locale.getDefault()).format(reminder.creationDate)
+        binding.reminderDate.text = SimpleDateFormat("EEEE, MMMM d, yyyy | h:mm a", Locale.getDefault()).format(reminder.date)
 
         binding.root.setOnClickListener {
             onReminderClicked(reminder.id)
         }
 
-        binding.reminderSolved.visibility = if (reminder.isSolved) {
-            View.VISIBLE
-        } else {
-            View.GONE
+        binding.reminderCheckbox.setOnCheckedChangeListener(null)
+        binding.reminderCheckbox.isChecked = reminder.isSolved
+
+        binding.reminderCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            binding.reminderCheckbox.visibility = if (isChecked) View.GONE else View.VISIBLE
+            binding.reminderSolved.visibility = if (isChecked) View.VISIBLE else View.GONE
+            reminder.isSolved = isChecked
+            onReminderClicked(reminder.id)
         }
+
+        binding.reminderSolved.visibility = if (reminder.isSolved) View.VISIBLE else View.GONE
+        binding.reminderCheckbox.visibility = if (reminder.isSolved) View.GONE else View.VISIBLE
     }
 }
+
 
 class AllTaskListAdapter (
     private val reminders: List<Reminder>,

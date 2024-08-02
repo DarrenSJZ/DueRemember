@@ -38,7 +38,6 @@ class AllTaskFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         _binding = FragmentAllTaskBinding.inflate(inflater, container, false)
 
         binding.allTaskListRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -48,7 +47,6 @@ class AllTaskFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Set up the MenuProvider
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -65,7 +63,6 @@ class AllTaskFragment : Fragment() {
                         deleteAllReminders()
                         true
                     }
-
                     else -> {
                         false
                     }
@@ -76,16 +73,12 @@ class AllTaskFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 allTaskViewModel.reminders.collect { reminders ->
-                    val formattedReminders = reminders.map { reminder ->
-                        reminder.copy(dateString = formatDate(reminder.date))
-                    }
                     binding.allTaskListRecyclerView.adapter =
-                        AllTaskListAdapter(formattedReminders) { reminderId ->
+                        AllTaskListAdapter(reminders) { reminderId ->
                             findNavController().navigate(
                                 AllTaskFragmentDirections.showNewReminder(reminderId)
                             )
                         }
-                    // Show or hide the empty list text based on whether there are reminders
                     binding.emptyListText.visibility = if (reminders.isEmpty()) View.VISIBLE else View.GONE
                 }
             }
@@ -104,8 +97,7 @@ class AllTaskFragment : Fragment() {
                 title = "",
                 desc = "",
                 date = Date(),
-                isSolved = false,
-                dateString = formatDate(Date())
+                isSolved = false
             )
             allTaskViewModel.addReminder(newReminder)
             findNavController().navigate(
@@ -129,9 +121,9 @@ class AllTaskFragment : Fragment() {
             create().show()
         }
     }
+}
 
-    private fun formatDate(date: Date): String {
-        val sdf = SimpleDateFormat("EEEE, MMMM d, yyyy | h:mm a", Locale.getDefault())
-        return sdf.format(date)
-    }
+private fun formatDate(date: Date): String {
+    val sdf = SimpleDateFormat("EEEE, MMMM d, yyyy | h:mm a", Locale.getDefault())
+    return sdf.format(date)
 }

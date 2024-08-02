@@ -26,6 +26,15 @@ class AllTaskViewModel : ViewModel(){
         reminderRepository.addReminder(reminder)
     }
 
+    fun updateReminder(reminder: Reminder) {
+        viewModelScope.launch {
+            reminderRepository.updateReminder(reminder)
+            reminderRepository.getReminders().collect { reminders ->
+                _reminders.value = reminders
+            }
+        }
+    }
+
 
     fun deleteAllReminders() {
         viewModelScope.launch {
