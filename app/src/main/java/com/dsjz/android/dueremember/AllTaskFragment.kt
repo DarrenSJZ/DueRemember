@@ -30,6 +30,7 @@ class AllTaskFragment : Fragment() {
             "Binding is inaccessible due to null, is the view visible?"
         }
     private val allTaskViewModel: AllTaskViewModel by viewModels()
+    private lateinit var adapter: AllTaskListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +39,14 @@ class AllTaskFragment : Fragment() {
         _binding = FragmentAllTaskBinding.inflate(inflater, container, false)
 
         binding.allTaskListRecyclerView.layoutManager = LinearLayoutManager(context)
+        adapter = AllTaskListAdapter(emptyList(), { reminderId ->
+            findNavController().navigate(
+                AllTaskFragmentDirections.showNewReminder(reminderId)
+            )
+        }, { reminder ->
+            allTaskViewModel.updateReminder(reminder)
+        })
+        binding.allTaskListRecyclerView.adapter = adapter
         return binding.root
     }
 
@@ -71,14 +80,7 @@ class AllTaskFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 allTaskViewModel.reminders.collect { reminders ->
                     val unresolvedReminders = allTaskViewModel.getUnresolvedReminders()
-                    binding.allTaskListRecyclerView.adapter =
-                        AllTaskListAdapter(unresolvedReminders, { reminderId ->
-                            findNavController().navigate(
-                                AllTaskFragmentDirections.showNewReminder(reminderId)
-                            )
-                        }, { reminder ->
-                            allTaskViewModel.updateReminder(reminder)
-                        })
+                    adapter.updateReminders(unresolvedReminders)
                     binding.emptyListText.visibility = if (unresolvedReminders.isEmpty()) View.VISIBLE else View.GONE
                 }
             }

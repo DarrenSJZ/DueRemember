@@ -1,5 +1,6 @@
 package com.dsjz.android.dueremember
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import com.dsjz.android.dueremember.databinding.ListItemAllTasksBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.UUID
+import java.util.Date
 
 class ReminderHolder(
     private val binding: ListItemAllTasksBinding
@@ -16,6 +18,15 @@ class ReminderHolder(
         binding.reminderTitle.text = reminder.title
         binding.reminderCreatedDate.text = SimpleDateFormat("EEEE, MMMM d, yyyy, h:mm a", Locale.getDefault()).format(reminder.creationDate)
         binding.reminderDate.text = SimpleDateFormat("EEEE, MMMM d, yyyy | h:mm a", Locale.getDefault()).format(reminder.date)
+
+        val currentDate = Date()
+        if (reminder.date.before(currentDate) && !reminder.isSolved) {
+            // Change text color for past due and not solved reminders
+            binding.reminderTitle.setTextColor(Color.RED)
+        } else {
+            // Default text color for other reminders
+            binding.reminderTitle.setTextColor(Color.BLACK)
+        }
 
         binding.root.setOnClickListener {
             onReminderClicked(reminder.id)
@@ -36,8 +47,8 @@ class ReminderHolder(
     }
 }
 
-class AllTaskListAdapter (
-    private val reminders: List<Reminder>,
+class AllTaskListAdapter(
+    private var reminders: List<Reminder>,
     private val onReminderClicked: (reminderId: UUID) -> Unit,
     private val onReminderStatusChanged: (reminder: Reminder) -> Unit
 ) : RecyclerView.Adapter<ReminderHolder>() {
@@ -53,4 +64,9 @@ class AllTaskListAdapter (
     }
 
     override fun getItemCount() = reminders.size
+
+    fun updateReminders(newReminders: List<Reminder>) {
+        reminders = newReminders
+        notifyDataSetChanged()
+    }
 }
