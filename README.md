@@ -20,7 +20,7 @@
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/DarrenSJZ/DueRemember.git  
-   cd due-remember
+   cd DueRemember
    ```
 
 2. **Setup the environment**:  
